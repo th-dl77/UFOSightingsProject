@@ -24,8 +24,8 @@ const LocationHandler = ({addMarker} : LocationHandlerProps) => {
 
 export default function Index() {
 
-
   const [sightings, setSightings] = useState<UFOSighting[]>();
+
   async function loadData() {
     const response = await fetch("https://sampleapis.assimilate.be/ufo/sightings")
     const sightings : UFOSighting[] = await response.json();
@@ -48,7 +48,7 @@ export default function Index() {
     setSightings([
       ...(sightings ?? []),
       {
-        id: Date.now(),
+        id: (sightings?.length ?? 0)+1,
         witnessName: "Anonymous",
         location: { latitude: lat, longitude: lng },
         description: "A mysterious sighting",
