@@ -1,7 +1,30 @@
-import { Text, View, FlatList, StyleSheet } from "react-native";
-import { useEffect, useState } from "react";
+import { MapContainer, Marker, Popup, SVGOverlay, TileLayer, useMap, useMapEvents } from "react-leaflet";
+import 'leaflet/dist/leaflet.css';
+import L, { LatLngTuple } from "leaflet";
+import { View, Text } from "react-native";
+import { useState, useEffect } from "react";
+
+const position: LatLngTuple = [51.505, -0.09];
+
+interface LocationHandlerProps {
+  addMarker: (lat: number, lng: number) => void;
+}
+const LocationHandler = ({addMarker} : LocationHandlerProps) => {
+  const map = useMapEvents({
+    dragend: () => {
+      console.log(map.getCenter());
+    },
+    click: (e) => {
+      addMarker(e.latlng.lat, e.latlng.lng);
+    }
+  });
+
+  return null;
+}
 
 export default function Index() {
+
+
   const [sightings, setSightings] = useState<UFOSighting[]>();
   async function loadData() {
     const response = await fetch("https://sampleapis.assimilate.be/ufo/sightings")
@@ -15,20 +38,53 @@ export default function Index() {
     loadData();
   }, []);
 
-  const styles = StyleSheet.create({
-    container: {flex: 1, flexDirection: "column"}
+  const iconX = L.icon({
+    iconUrl: 'https://raw.githubusercontent.com/similonap/public_icons/refs/heads/main/location-pin.png',
+    iconSize: [48, 48],
+    popupAnchor: [-3, 0],
   });
 
+  const addUFOSighting = (lat: number, lng: number) => {
+    setSightings([
+      ...(sightings ?? []),
+      {
+        id: Date.now(),
+        witnessName: "Anonymous",
+        location: { latitude: lat, longitude: lng },
+        description: "A mysterious sighting",
+        picture: "",
+        status: Status.Confirmed, 
+        dateTime: new Date(), 
+        witnessContact: "Unknown",
+      }
+    ]);
+  };
+  
+
   return (
-    <View style={styles.container}>
-    <FlatList
-        data={sightings}
-        renderItem={({item}) =>  <View style={{flexDirection: "row", alignItems: "center"}}>
-        <Text style={{flex: 1}}>{item.id}</Text>
-    </View>}
-        keyExtractor={item => item.id.toString()}
-    />
-</View>
+    <MapContainer
+      center={{ lat: 51.505, lng: -0.09 }}
+      zoom={13}
+      scrollWheelZoom={false}
+      style={{ width: '100%', height: '100%', position: 'absolute', top: 0, left: 0 }}
+      attributionControl={false}
+    >
+
+      <TileLayer
+        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+      />
+      <LocationHandler addMarker={(lat, lng) => addUFOSighting(lat,lng)} />
+      {sightings && sightings.map((sighting, index) => (
+        <Marker key={index} position={[sighting.location.latitude, sighting.location.longitude]} icon={iconX}>
+          <Popup >
+             <View style={{backgroundColor: 'white', padding: 10, width: 100}}>
+                <Text>{sighting.id}</Text>
+             </View>
+          </Popup>
+        </Marker>
+      ))}
+
+    </MapContainer>
   );
 }
 
