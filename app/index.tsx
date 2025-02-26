@@ -1,7 +1,7 @@
 import { MapContainer, Marker, Popup, SVGOverlay, TileLayer, useMap, useMapEvents } from "react-leaflet";
 import 'leaflet/dist/leaflet.css';
 import L, { LatLngTuple } from "leaflet";
-import { View, Text } from "react-native";
+import { View, Text, TouchableOpacity } from "react-native";
 import { useState, useEffect } from "react";
 import { useRouter } from "expo-router";
 
@@ -80,8 +80,13 @@ export default function Index() {
       {sightings && sightings.map((sighting, index) => (
         <Marker key={index} position={[sighting.location.latitude, sighting.location.longitude]} icon={iconX}>
           <Popup >
-             <View style={{backgroundColor: 'white', padding: 10, width: 100}}>
-                <a onClick={() => router.push(`/details/${sighting.id}`)}>Link naar detailpagina</a>
+             <View style={{backgroundColor: 'white', padding: 10, width: 250}}>
+                <Text>Sighting identifcation number: {sighting.id}</Text>
+                <Text>Sighting location latitude: {sighting.location.latitude}</Text>
+                <Text>Sighting location longitude: {sighting.location.longitude}</Text>
+                <TouchableOpacity onPress={() => router.push(`/details/${sighting.id}`)}>
+                  <Text style={{color: 'blue', textDecorationLine: 'underline'}}>Link naar detailpagina</Text>
+                </TouchableOpacity>
              </View>
           </Popup>
         </Marker>
