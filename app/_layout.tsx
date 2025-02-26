@@ -11,6 +11,13 @@ export default function RootLayout() {
             tabBarIcon: ({ color, size }) => <MaterialCommunityIcons name="home" color={color} size={size} />
           }}
         />
+        <Tabs.Screen
+          name="list"
+          options={{
+            title: 'List',
+            tabBarIcon: ({ color, size }) => <MaterialCommunityIcons name="home" color={color} size={size} />
+          }}
+        />
       </Tabs>
   )
 }
