@@ -1,6 +1,8 @@
 import { View, Text, FlatList, TouchableOpacity, Image } from "react-native";
 import React, { useState, useEffect } from "react";
 import { UFOSighting } from ".";
+import { usePathname, useRouter } from "expo-router";
+import { Path } from "leaflet";
 
 export default function List() {
 
@@ -25,6 +27,8 @@ export default function List() {
   useEffect(() => {
     loadData();
   }, []);
+
+  const router = useRouter();
 
     return (
         <View style={{flex: 1}}>
