@@ -3,6 +3,7 @@ import 'leaflet/dist/leaflet.css';
 import L, { LatLngTuple } from "leaflet";
 import { View, Text } from "react-native";
 import { useState, useEffect } from "react";
+import { useRouter } from "expo-router";
 
 const position: LatLngTuple = [51.505, -0.09];
 
@@ -33,6 +34,8 @@ export default function Index() {
 
     setSightings(sightings);
   }
+
+  const router = useRouter();
 
   useEffect(() => {
     loadData();
@@ -78,7 +81,7 @@ export default function Index() {
         <Marker key={index} position={[sighting.location.latitude, sighting.location.longitude]} icon={iconX}>
           <Popup >
              <View style={{backgroundColor: 'white', padding: 10, width: 100}}>
-                <Text>{sighting.id}</Text>
+                <a onClick={() => router.push(`/details/${sighting.id}`)}>Link naar detailpagina</a>
              </View>
           </Popup>
         </Marker>

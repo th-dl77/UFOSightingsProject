@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import { UFOSighting } from ".";
 import { usePathname, useRouter } from "expo-router";
 import { Path } from "leaflet";
+import { navigate } from "expo-router/build/global-state/routing";
 
 export default function List() {
 
@@ -36,7 +37,7 @@ export default function List() {
                 data={sightings}
                 keyExtractor={item => item.id.toString()}
                 renderItem={({ item }) => (
-                    <TouchableOpacity>
+                    <TouchableOpacity onPress={() => router.push(`/details/${item.id}`)}>
                         <Text>{item.id}</Text>
                         <Image source={{uri: item.picture}}
                             style={{width: 400, height: 400}} />
