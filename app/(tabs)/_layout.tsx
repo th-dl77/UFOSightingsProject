@@ -6,7 +6,7 @@ export default function RootLayout() {
   return (
     <Tabs>
       <Tabs.Screen
-        name="index"
+        name="map"
         options={{
           title: 'Map',
           tabBarIcon: ({ color, size }) => <MaterialCommunityIcons name="map" color={color} size={size} />

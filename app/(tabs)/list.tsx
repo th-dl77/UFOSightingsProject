@@ -1,14 +1,11 @@
 import { View, Text, FlatList, TouchableOpacity, Image, StyleSheet } from "react-native";
 import React, { useState, useEffect } from "react";
-import { usePathname, useRouter } from "expo-router";
-import { Path } from "leaflet";
-import { navigate } from "expo-router/build/global-state/routing";
-import { format } from 'date-fns';
-import { UFOSighting } from "./map";
+import { useRouter } from "expo-router";
+import { format } from "date-fns";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { UFOSighting } from "./map";
 
 export default function List() {
-
   const [sightings, setSightings] = useState<UFOSighting[]>();
 
   async function loadData() {
@@ -48,71 +45,78 @@ export default function List() {
             style={styles.itemContainer}
             onPress={() => router.push(`/details/${item.id}`)}
           >
-            <Text style={styles.idText}>{item.id}</Text>
             <Image source={{ uri: item.picture }} style={styles.image} />
-            <Text
-              style={[
-                styles.statusText,
-                { color: item.status === 'confirmed' ? 'green' : 'red' }
-              ]}
-            >
-              {item.status}
-            </Text>
-            <Text style={styles.dateText}>
-              {format(new Date(item.dateTime), 'dd MMM yyyy, hh:mm a')}
-            </Text>
-            <Text style={styles.description} numberOfLines={2}>
-              {item.description}
-            </Text>
+            <View style={styles.textContainer}>
+              <Text style={styles.idText}>ID: {item.id}</Text>
+              <Text
+                style={[
+                  styles.statusText,
+                  { color: item.status === "confirmed" ? "green" : "red" },
+                ]}
+              >
+                {item.status}
+              </Text>
+              <Text style={styles.dateText}>
+                {format(new Date(item.dateTime), "dd MMM yyyy, hh:mm a")}
+              </Text>
+              <Text style={styles.description} numberOfLines={2}>
+                {item.description}
+              </Text>
+            </View>
           </TouchableOpacity>
         )}
       />
     </View>
-  )
+  );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: "#fff",
     padding: 16,
-    backgroundColor: '#fff',
   },
   itemContainer: {
+    backgroundColor: "#f9f9f9",
+    borderRadius: 10,
+    padding: 16,
     marginBottom: 16,
-    padding: 12,
-    borderRadius: 8,
-    backgroundColor: '#f9f9f9',
-    shadowColor: '#000',
-    shadowOpacity: 0.1,
+    elevation: 3,
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
-    shadowRadius: 4,
-    elevation: 2,
-  },
-  idText: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 8,
+    shadowOpacity: 0.1,
+    shadowRadius: 5,
+    flexDirection: "row",
+    alignItems: "center",
   },
   image: {
-    width: 400,
-    height: 400,
+    width: 100,
+    height: 100,
     borderRadius: 8,
+    marginRight: 16,
+    resizeMode: "contain",
+  },
+  textContainer: {
+    flex: 1,
+  },
+  idText: {
+    fontSize: 16,
+    fontWeight: "bold",
+    color: "#333",
     marginBottom: 8,
   },
   statusText: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#333',
-    marginBottom: 4,
+    fontSize: 14,
+    fontWeight: "600",
+    marginBottom: 8,
   },
   dateText: {
-    fontSize: 14,
-    color: '#666',
-    marginBottom: 4,
+    fontSize: 12,
+    color: "#555",
+    marginBottom: 8,
   },
   description: {
     fontSize: 14,
-    color: '#444',
-    textAlign: 'center',
+    color: "#333",
   },
 });
