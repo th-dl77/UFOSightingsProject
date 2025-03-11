@@ -24,7 +24,7 @@ const LocationHandler = ({ addMarker }: LocationHandlerProps) => {
   return null;
 }
 
-export default function Index() {
+export default function Map() {
 
   const [sightings, setSightings] = useState<UFOSighting[]>();
 

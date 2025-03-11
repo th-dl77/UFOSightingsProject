@@ -2,7 +2,7 @@ import { View, Text, FlatList, TouchableOpacity, Image, StyleSheet } from "react
 import React, { useState, useEffect } from "react";
 import { usePathname, useRouter } from "expo-router";
 import { useLocalSearchParams } from "expo-router";
-import { UFOSighting } from "../(tabs)";
+import { UFOSighting } from "../(tabs)/map";
 import { format } from "date-fns";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
