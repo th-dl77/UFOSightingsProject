@@ -4,7 +4,7 @@ import { usePathname, useRouter } from "expo-router";
 import { Path } from "leaflet";
 import { navigate } from "expo-router/build/global-state/routing";
 import { format } from 'date-fns';
-import { UFOSighting } from ".";
+import { UFOSighting } from "./(tabs)";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function List() {
