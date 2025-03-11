@@ -1,6 +1,6 @@
 import { View, Text, ScrollView, TouchableOpacity, TextInput, Image, StyleSheet, Alert } from "react-native";
 import React, { useState } from "react";
-import { useRouter } from "expo-router";
+import { router, useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
 import * as Location from "expo-location";
@@ -89,7 +89,37 @@ export default function Report() {
     }
 
     async function submitReport() {
-        // todo: implement actual saving to asyncstorage
+        try {
+            //validate data
+            if (!formData.description) {
+                throw new Error("Please provide a description");
+            }
+
+            if (!formData.location.latitude || !formData.location.longitude) {
+                throw new Error("Please provide location information");
+            }
+
+            //create report with ID and timestamp
+            const reportData = {
+                id: Date.now().toString(),
+                ...formData,
+                dateTime: new Date().toISOString(),
+                status: "unconfirmed",
+            };
+
+            //get existing reports from AsyncStorage
+            const existingReportsJSON = await AsyncStorage.getItem('ufoReports');
+            const existingReports = existingReportsJSON ? JSON.parse(existingReportsJSON) : [];
+
+            //add new report to the list
+            const updatedReports = [...existingReports, reportData];
+
+            //save updated list
+            await AsyncStorage.setItem('ufoReports', JSON.stringify(updatedReports));
+
+        } catch (err: any) {
+        } finally {
+        }
     }
 
     return (

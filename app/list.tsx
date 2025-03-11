@@ -5,17 +5,31 @@ import { Path } from "leaflet";
 import { navigate } from "expo-router/build/global-state/routing";
 import { format } from 'date-fns';
 import { UFOSighting } from ".";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function List() {
 
   const [sightings, setSightings] = useState<UFOSighting[]>();
 
   async function loadData() {
-    const response = await fetch("https://sampleapis.assimilate.be/ufo/sightings")
-    const sightings: UFOSighting[] = await response.json();
-    console.log(sightings);
+    try {
+      const response = await fetch("https://sampleapis.assimilate.be/ufo/sightings");
+      const sightings: UFOSighting[] = await response.json();
 
-    setSightings(sightings);
+      const localStorageData = await AsyncStorage.getItem('ufoReports');
+      let localSightings: UFOSighting[] = [];
+
+      if (localStorageData) {
+        localSightings = JSON.parse(localStorageData);
+      }
+
+      const combinedSightings = [...sightings, ...localSightings];
+
+      console.log("Combined sightings:", combinedSightings);
+      setSightings(combinedSightings);
+    } catch (error) {
+      console.error("Error loading data:", error);
+    }
   }
 
   useEffect(() => {
