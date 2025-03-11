@@ -99,9 +99,10 @@ export default function Report() {
                 throw new Error("Please provide location information");
             }
 
+            const sightingId = Date.now().toString()
             //create report with ID and timestamp
             const reportData = {
-                id: Date.now().toString(),
+                id: sightingId,
                 ...formData,
                 dateTime: new Date().toISOString(),
                 status: "unconfirmed",
@@ -116,6 +117,8 @@ export default function Report() {
 
             //save updated list
             await AsyncStorage.setItem('ufoReports', JSON.stringify(updatedReports));
+
+            router.push(`/details/${sightingId}`)
 
         } catch (err: any) {
         } finally {

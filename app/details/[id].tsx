@@ -4,23 +4,38 @@ import { usePathname, useRouter } from "expo-router";
 import { useLocalSearchParams } from "expo-router";
 import { UFOSighting } from "..";
 import { format } from "date-fns";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function Details() {
   const { id } = useLocalSearchParams();
   const [sighting, setSighting] = useState<UFOSighting | undefined>();
 
   async function loadData() {
-    const response = await fetch(`https://sampleapis.assimilate.be/ufo/sightings/${id}`);
-    const sighting: UFOSighting = await response.json();
-    console.log(sighting);
-    setSighting(sighting);
+    try {
+      //check local storage
+      const localData = await AsyncStorage.getItem("ufoReports");
+      const localSightings: UFOSighting[] = localData ? JSON.parse(localData) : [];
+
+      //find sighting in local storage
+      const foundLocalSighting = localSightings.find((s) => s.id.toString() === id);
+
+      if (foundLocalSighting) {
+        setSighting(foundLocalSighting);
+      } else {
+        //fetch from API if not found in local storage
+        const response = await fetch(`https://sampleapis.assimilate.be/ufo/sightings/${id}`);
+        const apiSighting: UFOSighting = await response.json();
+        setSighting(apiSighting);
+      }
+    } catch (error) {
+      console.error("Error loading sighting data:", error);
+    }
   }
 
   useEffect(() => {
     loadData();
   }, []);
 
-  // Format date using date-fns
   const formattedDate = sighting?.dateTime
     ? format(new Date(sighting.dateTime), "dd MMM yyyy, hh:mm a")
     : "No Date Available";
