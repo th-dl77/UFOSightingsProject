@@ -1,10 +1,10 @@
 import { View, Text, FlatList, TouchableOpacity, Image, StyleSheet } from "react-native";
 import React, { useState, useEffect } from "react";
-import { UFOSighting } from ".";
 import { usePathname, useRouter } from "expo-router";
 import { Path } from "leaflet";
 import { navigate } from "expo-router/build/global-state/routing";
 import { format } from 'date-fns';
+import { UFOSighting } from ".";
 
 export default function List() {
 
@@ -12,19 +12,11 @@ export default function List() {
 
   async function loadData() {
     const response = await fetch("https://sampleapis.assimilate.be/ufo/sightings")
-    const sightings : UFOSighting[] = await response.json();
+    const sightings: UFOSighting[] = await response.json();
     console.log(sightings);
 
     setSightings(sightings);
   }
-
-  type ItemProps = {title: string};
-
-  const Item = ({title}: ItemProps) => (
-    <View>
-      <Text>{title}</Text>
-    </View>
-  );
 
   useEffect(() => {
     loadData();
@@ -32,8 +24,8 @@ export default function List() {
 
   const router = useRouter();
 
-    return (
-<View style={styles.container}>
+  return (
+    <View style={styles.container}>
       <FlatList
         data={sightings}
         keyExtractor={(item) => item.id.toString()}
@@ -62,8 +54,7 @@ export default function List() {
         )}
       />
     </View>
-    )
-
+  )
 }
 
 const styles = StyleSheet.create({

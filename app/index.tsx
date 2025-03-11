@@ -4,13 +4,14 @@ import L, { LatLngTuple } from "leaflet";
 import { View, Text, TouchableOpacity } from "react-native";
 import { useState, useEffect } from "react";
 import { useRouter } from "expo-router";
+import React from "react";
 
 const position: LatLngTuple = [51.505, -0.09];
 
 interface LocationHandlerProps {
   addMarker: (lat: number, lng: number) => void;
 }
-const LocationHandler = ({addMarker} : LocationHandlerProps) => {
+const LocationHandler = ({ addMarker }: LocationHandlerProps) => {
   const map = useMapEvents({
     dragend: () => {
       console.log(map.getCenter());
@@ -29,7 +30,7 @@ export default function Index() {
 
   async function loadData() {
     const response = await fetch("https://sampleapis.assimilate.be/ufo/sightings")
-    const sightings : UFOSighting[] = await response.json();
+    const sightings: UFOSighting[] = await response.json();
     console.log(sightings);
 
     setSightings(sightings);
@@ -51,18 +52,18 @@ export default function Index() {
     setSightings([
       ...(sightings ?? []),
       {
-        id: (sightings?.length ?? 0)+1,
+        id: (sightings?.length ?? 0) + 1,
         witnessName: "Anonymous",
         location: { latitude: lat, longitude: lng },
         description: "A mysterious sighting",
         picture: "",
-        status: Status.Confirmed, 
-        dateTime: new Date(), 
+        status: Status.Confirmed,
+        dateTime: new Date(),
         witnessContact: "Unknown",
       }
     ]);
   };
-  
+
 
   return (
     <MapContainer
@@ -76,18 +77,18 @@ export default function Index() {
       <TileLayer
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
-      <LocationHandler addMarker={(lat, lng) => addUFOSighting(lat,lng)} />
+      <LocationHandler addMarker={(lat, lng) => addUFOSighting(lat, lng)} />
       {sightings && sightings.map((sighting, index) => (
         <Marker key={index} position={[sighting.location.latitude, sighting.location.longitude]} icon={iconX}>
           <Popup >
-             <View style={{backgroundColor: 'white', padding: 10, width: 250}}>
-                <Text>Sighting identifcation number: {sighting.id}</Text>
-                <Text>Sighting location latitude: {sighting.location.latitude}</Text>
-                <Text>Sighting location longitude: {sighting.location.longitude}</Text>
-                <TouchableOpacity onPress={() => router.push(`/details/${sighting.id}`)}>
-                  <Text style={{color: 'blue', textDecorationLine: 'underline'}}>Link naar detailpagina</Text>
-                </TouchableOpacity>
-             </View>
+            <View style={{ backgroundColor: 'white', padding: 10, width: 250 }}>
+              <Text>Sighting identifcation number: {sighting.id}</Text>
+              <Text>Sighting location latitude: {sighting.location.latitude}</Text>
+              <Text>Sighting location longitude: {sighting.location.longitude}</Text>
+              <TouchableOpacity onPress={() => router.push(`/details/${sighting.id}`)}>
+                <Text style={{ color: 'blue', textDecorationLine: 'underline' }}>Link naar detailpagina</Text>
+              </TouchableOpacity>
+            </View>
           </Popup>
         </Marker>
       ))}
@@ -97,18 +98,18 @@ export default function Index() {
 }
 
 export interface UFOSighting {
-  id:             number;
-  witnessName:    string;
-  location:       Location;
-  description:    string;
-  picture:        string;
-  status:         Status;
-  dateTime:       Date;
+  id: number;
+  witnessName: string;
+  location: Location;
+  description: string;
+  picture: string;
+  status: Status;
+  dateTime: Date;
   witnessContact: string;
 }
 
 export interface Location {
-  latitude:  number;
+  latitude: number;
   longitude: number;
 }
 
