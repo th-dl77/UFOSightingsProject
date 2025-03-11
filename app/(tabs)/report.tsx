@@ -1,6 +1,6 @@
 import { View, Text, ScrollView, TouchableOpacity, TextInput, Image, StyleSheet, Alert } from "react-native";
-import React, { useState } from "react";
-import { router, useRouter } from "expo-router";
+import React, { useState, useEffect } from "react";
+import { router } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
 import * as Location from "expo-location";
@@ -19,6 +19,7 @@ export interface UFOSighting {
 }
 
 export default function Report() {
+    //state for form data
     const [formData, setFormData] = useState({
         description: "",
         location: {
@@ -30,8 +31,39 @@ export default function Report() {
         picture: null as string | null,
     });
 
+    //state for the highest ID value
+    const [highestId, setHighestId] = useState<number>(0);
+
+    useEffect(() => {
+        const loadExistingReports = async () => {
+            //fetch reports from AsyncStorage (local storage)
+            const existingReportsJSON = await AsyncStorage.getItem('ufoReports');
+            const existingReports = existingReportsJSON ? JSON.parse(existingReportsJSON) : [];
+
+            //fetch reports from the API (simulate API fetch here)
+            const apiReports = await fetchReportsFromAPI();
+
+            //combine local + API
+            const combinedReports = [...existingReports, ...apiReports];
+
+            //find the highest ID value from the combined reports
+            if (combinedReports.length > 0) {
+                const maxId = Math.max(...combinedReports.map((report: UFOSighting) => report.id), 0);
+                setHighestId(maxId);
+            }
+        };
+
+        loadExistingReports();
+    }, []);
+
+    //simulate fetching reports from an API (replace with actual API call)
+    const fetchReportsFromAPI = async () => {
+        const response = await fetch("https://sampleapis.assimilate.be/ufo/sightings");
+        const sightings: UFOSighting[] = await response.json();
+        return sightings;
+    };
+
     async function pickImage() {
-        //open image picker
         const result = await ImagePicker.launchImageLibraryAsync({
             mediaTypes: ImagePicker.MediaTypeOptions.Images,
             allowsEditing: true,
@@ -45,15 +77,12 @@ export default function Report() {
     }
 
     async function takePhoto() {
-        // request camera permissions
         const { status } = await ImagePicker.requestCameraPermissionsAsync();
 
         if (status !== "granted") {
-            //todo: give error that indicates no permission
             return;
         }
 
-        // launch camera
         const result = await ImagePicker.launchCameraAsync({
             mediaTypes: ImagePicker.MediaTypeOptions.Images,
             allowsEditing: true,
@@ -67,11 +96,9 @@ export default function Report() {
     }
 
     async function getCurrentLocation() {
-        //request current location from user
         try {
             const { status } = await Location.requestForegroundPermissionsAsync();
             if (status !== "granted") {
-                //todo: give error that indicates no permission
                 return;
             }
 
@@ -83,14 +110,13 @@ export default function Report() {
                     longitude: location.coords.longitude.toString(),
                 },
             });
-        } catch (err: any) {
-            //todo: give error
+        } catch (err) {
+            //todo: handle error
         }
     }
 
     async function submitReport() {
         try {
-            //validate data
             if (!formData.description) {
                 throw new Error("Please provide a description");
             }
@@ -99,29 +125,33 @@ export default function Report() {
                 throw new Error("Please provide location information");
             }
 
-            const sightingId = Date.now().toString()
-            //create report with ID and timestamp
+            //generate a unique ID for the new report, starting from the highest ID + 1
+            const newId = highestId + 1;
+
             const reportData = {
-                id: sightingId,
+                id: newId,
                 ...formData,
                 dateTime: new Date().toISOString(),
                 status: "unconfirmed",
             };
 
-            //get existing reports from AsyncStorage
+            //get existing reports from storage
             const existingReportsJSON = await AsyncStorage.getItem('ufoReports');
             const existingReports = existingReportsJSON ? JSON.parse(existingReportsJSON) : [];
 
-            //add new report to the list
+            //add the new report to the list
             const updatedReports = [...existingReports, reportData];
 
-            //save updated list
+            //save the updated list back to AsyncStorage
             await AsyncStorage.setItem('ufoReports', JSON.stringify(updatedReports));
 
-            router.push(`/details/${sightingId}`)
+            //update the highest ID state
+            setHighestId(newId);
 
-        } catch (err: any) {
-        } finally {
+            //navigate to the report details page
+            router.push(`/details/${newId}`);
+        } catch (err) {
+            //todo: handle error
         }
     }
 
@@ -228,12 +258,9 @@ export default function Report() {
 
                 <TouchableOpacity
                     style={[styles.submitBtn, styles.submitBtnDisabled]}
-
                     onPress={submitReport}
                 >
-                    <Text style={styles.submitBtnText}>
-                        Submit Report
-                    </Text>
+                    <Text style={styles.submitBtnText}>Submit Report</Text>
                 </TouchableOpacity>
             </ScrollView>
         </View>
