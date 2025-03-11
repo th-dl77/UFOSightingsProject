@@ -93,54 +93,56 @@ export default function Report() {
     }
 
     return (
-        <View>
-            <ScrollView>
-                <Text>Report UFO Sighting</Text>
+        <View style={styles.container}>
+            <ScrollView style={styles.scrollContainer}>
+                <Text style={styles.headerText}>Report UFO Sighting</Text>
 
                 {formData.picture ? (
-                    <View>
+                    <View style={styles.imagePreviewContainer}>
                         <Image
                             source={{ uri: formData.picture }}
+                            style={styles.previewImage}
                         />
                         <TouchableOpacity
+                            style={styles.changeImageBtn}
                             onPress={() => setFormData({ ...formData, picture: null })}
                         >
-                            <Text>Change Image</Text>
+                            <Text style={styles.changeImageText}>Change Image</Text>
                         </TouchableOpacity>
                     </View>
                 ) : (
-                    <View>
-                        <TouchableOpacity onPress={takePhoto}>
+                    <View style={styles.imageButtonsContainer}>
+                        <TouchableOpacity style={styles.imageButton} onPress={takePhoto}>
                             <Ionicons name="camera" size={30} color="#007AFF" />
-                            <Text>Take Photo</Text>
+                            <Text style={styles.imageButtonText}>Take Photo</Text>
                         </TouchableOpacity>
 
-                        <TouchableOpacity onPress={pickImage}>
+                        <TouchableOpacity style={styles.imageButton} onPress={pickImage}>
                             <Ionicons name="images" size={30} color="#007AFF" />
-                            <Text>Choose from Gallery</Text>
+                            <Text style={styles.imageButtonText}>Choose from Gallery</Text>
                         </TouchableOpacity>
                     </View>
                 )}
 
-                <Text>Description:</Text>
+                <Text style={styles.labelText}>Description:</Text>
                 <TextInput
+                    style={styles.input}
+                    multiline
+                    numberOfLines={4}
                     placeholder="Description of new sighting"
                     value={formData.description}
                     onChangeText={(text) => setFormData({ ...formData, description: text })}
                 />
 
-                <View>
-                    <Text>Location:</Text>
-                    <TouchableOpacity onPress={getCurrentLocation}>
-                        <Ionicons name="location" size={20} color="#fff" />
-                        <Text>Use Current Location</Text>
-                    </TouchableOpacity>
+                <View style={styles.locationContainer}>
+                    <Text style={styles.labelText}>Location:</Text>
                 </View>
 
-                <View>
-                    <View>
-                        <Text>Latitude:</Text>
+                <View style={styles.coordsContainer}>
+                    <View style={styles.coordField}>
+                        <Text style={styles.coordLabel}>Latitude:</Text>
                         <TextInput
+                            style={styles.coordInput}
                             placeholder="Location Latitude"
                             keyboardType="numeric"
                             value={formData.location.latitude}
@@ -152,9 +154,10 @@ export default function Report() {
                             }
                         />
                     </View>
-                    <View>
-                        <Text>Longitude:</Text>
+                    <View style={styles.coordField}>
+                        <Text style={styles.coordLabel}>Longitude:</Text>
                         <TextInput
+                            style={styles.coordInput}
                             placeholder="Location Longitude"
                             keyboardType="numeric"
                             value={formData.location.longitude}
@@ -167,25 +170,35 @@ export default function Report() {
                         />
                     </View>
                 </View>
+                <View>
+                    <TouchableOpacity style={styles.locationBtn} onPress={getCurrentLocation}>
+                        <Ionicons name="location" size={20} color="#fff" />
+                        <Text style={styles.locationBtnText}>Use Current Location</Text>
+                    </TouchableOpacity>
+                </View>
 
-                <Text>Your Name:</Text>
+                <Text style={styles.labelText}>Your Name:</Text>
                 <TextInput
+                    style={styles.input}
                     placeholder="Enter your name"
                     value={formData.witnessName}
                     onChangeText={(text) => setFormData({ ...formData, witnessName: text })}
                 />
 
-                <Text>Contact Information:</Text>
+                <Text style={styles.labelText}>Contact Information:</Text>
                 <TextInput
+                    style={styles.input}
                     placeholder="Enter your email"
                     value={formData.witnessContact}
                     onChangeText={(text) => setFormData({ ...formData, witnessContact: text })}
                 />
 
                 <TouchableOpacity
+                    style={[styles.submitBtn, styles.submitBtnDisabled]}
+
                     onPress={submitReport}
                 >
-                    <Text>
+                    <Text style={styles.submitBtnText}>
                         Submit Report
                     </Text>
                 </TouchableOpacity>
@@ -193,3 +206,131 @@ export default function Report() {
         </View>
     );
 }
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        backgroundColor: "#fff",
+    },
+    scrollContainer: {
+        flex: 1,
+        padding: 16,
+    },
+    headerText: {
+        fontSize: 24,
+        fontWeight: "bold",
+        marginBottom: 20,
+        textAlign: "center",
+    },
+    imagePreviewContainer: {
+        alignItems: "center",
+        marginBottom: 20,
+    },
+    previewImage: {
+        width: 250,
+        height: 250,
+        borderRadius: 8,
+        marginBottom: 8,
+    },
+    changeImageBtn: {
+        backgroundColor: "#f0f0f0",
+        padding: 8,
+        borderRadius: 4,
+    },
+    changeImageText: {
+        color: "#007AFF",
+        fontWeight: "600",
+    },
+    imageButtonsContainer: {
+        flexDirection: "row",
+        justifyContent: "space-around",
+        marginBottom: 20,
+    },
+    imageButton: {
+        alignItems: "center",
+        backgroundColor: "#f8f8f8",
+        padding: 16,
+        borderRadius: 8,
+        borderWidth: 1,
+        borderColor: "#ddd",
+        flex: 0.45,
+    },
+    imageButtonText: {
+        marginTop: 8,
+        color: "#007AFF",
+        fontWeight: "500",
+        textAlign: "center",
+    },
+    labelText: {
+        fontSize: 16,
+        fontWeight: "bold",
+        marginBottom: 8,
+        color: "#333",
+    },
+    input: {
+        borderWidth: 1,
+        borderColor: "#ddd",
+        borderRadius: 8,
+        padding: 12,
+        marginBottom: 16,
+        fontSize: 16,
+    },
+    locationContainer: {
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "space-between",
+        marginBottom: 8,
+    },
+    locationBtn: {
+        flexDirection: "row",
+        width: 200,
+        marginBottom: 20,
+        backgroundColor: "#007AFF",
+        borderRadius: 8,
+        padding: 8,
+        alignItems: "center",
+    },
+    locationBtnText: {
+        color: "#fff",
+        marginLeft: 8,
+        fontWeight: "600",
+    },
+    coordsContainer: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        marginBottom: 16,
+    },
+    coordField: {
+        flex: 1,
+        marginRight: 8,
+    },
+    coordLabel: {
+        fontSize: 14,
+        fontWeight: "600",
+        marginBottom: 4,
+        color: "#555",
+    },
+    coordInput: {
+        borderWidth: 1,
+        borderColor: "#ddd",
+        borderRadius: 8,
+        padding: 10,
+        fontSize: 14,
+    },
+    submitBtn: {
+        backgroundColor: "#4CAF50",
+        padding: 16,
+        borderRadius: 8,
+        alignItems: "center",
+        marginTop: 8,
+        marginBottom: 30,
+    },
+    submitBtnDisabled: {
+        backgroundColor: "#A5D6A7",
+    },
+    submitBtnText: {
+        color: "#fff",
+        fontWeight: "bold",
+        fontSize: 16,
+    },
+});
