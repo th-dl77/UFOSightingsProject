@@ -7,18 +7,7 @@ import * as Location from "expo-location";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import DatePicker from 'react-datepicker'
 import "react-datepicker/dist/react-datepicker.css";
-
-type Status = "pending" | "verified" | "rejected";
-
-export interface UFOSighting {
-    id: number;
-    witnessName: string;
-    location: Location;
-    description: string;
-    picture: string | null;
-    status: Status;
-    witnessContact: string;
-}
+import { UFOSighting } from "../types/types";
 
 export default function Report() {
     //state for form data
@@ -33,7 +22,7 @@ export default function Report() {
         picture: null as string | null,
     });
 
-    const [startDate, setStartDate] = useState<Date | null>(new Date());
+    const [sightingDate, setSightingDate] = useState<Date | null>(new Date());
     //state for the highest ID value
     const [highestId, setHighestId] = useState<number>(0);
 
@@ -134,7 +123,7 @@ export default function Report() {
             const reportData = {
                 id: newId,
                 ...formData,
-                dateTime: startDate,
+                dateTime: sightingDate,
                 status: "unconfirmed",
             };
 
@@ -206,10 +195,10 @@ export default function Report() {
                     <Text style={styles.labelText}>Date:</Text>
                     <DatePicker
                         wrapperClassName="datePickerContainer"
-                        selected={startDate}
+                        selected={sightingDate}
                         popperPlacement="bottom-start"
                         maxDate={today}
-                        onChange={(date) => setStartDate(date)}
+                        onChange={(date) => setSightingDate(date)}
                         dateFormat="MMMM d, yyyy"
                     />
                 </View>

@@ -7,12 +7,10 @@ import { useRouter } from "expo-router";
 import React from "react";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import eventEmitter from "../eventEmitter";
+import { LocationHandlerProps, Status, UFOSighting } from "../types/types";
 
 const position: LatLngTuple = [51.505, -0.09];
 
-interface LocationHandlerProps {
-  addMarker: (lat: number, lng: number) => void;
-}
 const LocationHandler = ({ addMarker }: LocationHandlerProps) => {
   const map = useMapEvents({
     dragend: () => {
@@ -140,25 +138,4 @@ export default function Map() {
 
     </MapContainer>
   );
-}
-
-export interface UFOSighting {
-  id: number;
-  witnessName: string;
-  location: Location;
-  description: string;
-  picture: string;
-  status: Status;
-  dateTime: Date;
-  witnessContact: string;
-}
-
-export interface Location {
-  latitude: number;
-  longitude: number;
-}
-
-export enum Status {
-  Confirmed = "confirmed",
-  Unconfirmed = "unconfirmed",
 }

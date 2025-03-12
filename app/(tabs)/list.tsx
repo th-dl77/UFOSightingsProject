@@ -3,9 +3,8 @@ import React, { useState, useEffect } from "react";
 import { useRouter } from "expo-router";
 import { format } from "date-fns";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { UFOSighting } from "./map";
-import { reload } from "expo-router/build/global-state/routing";
 import eventEmitter from "../eventEmitter";
+import { UFOSighting } from "../types/types";
 
 export default function List() {
   const [sightings, setSightings] = useState<UFOSighting[]>();
