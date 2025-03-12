@@ -158,6 +158,8 @@ export default function Report() {
         }
     }
 
+    const today = new Date();
+
     return (
         <View style={styles.container}>
             <ScrollView style={styles.scrollContainer}>
@@ -199,6 +201,18 @@ export default function Report() {
                     value={formData.description}
                     onChangeText={(text) => setFormData({ ...formData, description: text })}
                 />
+
+                <View style={styles.datePickerContainer}>
+                    <Text style={styles.labelText}>Date:</Text>
+                    <DatePicker
+                        wrapperClassName="datePickerContainer"
+                        selected={startDate}
+                        popperPlacement="bottom-start"
+                        maxDate={today}
+                        onChange={(date) => setStartDate(date)}
+                        dateFormat="MMMM d, yyyy"
+                    />
+                </View>
 
                 <View style={styles.locationContainer}>
                     <Text style={styles.labelText}>Location:</Text>
@@ -242,15 +256,6 @@ export default function Report() {
                         <Text style={styles.locationBtnText}>Use Current Location</Text>
                     </TouchableOpacity>
                 </View>
-
-                <View>
-                    <DatePicker
-                        selected={startDate}
-                        onChange={(date) => setStartDate(date)}
-                        dateFormat="MMMM d, yyyy"
-                    />
-                </View>
-
                 <Text style={styles.labelText}>Your Name:</Text>
                 <TextInput
                     style={styles.input}
@@ -282,6 +287,10 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: "#fff",
+    },
+    datePickerContainer: {
+        zIndex: 9999,
+        marginBottom: 20,
     },
     scrollContainer: {
         flex: 1,
