@@ -28,6 +28,13 @@ export default function Report() {
     //state for the highest ID value
     const [highestId, setHighestId] = useState<number>(0);
 
+    const [emailError, setEmailError] = useState<string>("");
+
+    const validateEmail = (email: string) => {
+        const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+        return emailRegex.test(email);
+    };
+
     useEffect(() => {
         if (location) {
             try {
@@ -126,12 +133,23 @@ export default function Report() {
 
     async function submitReport() {
         try {
+            if (!formData.picture) {
+                throw new Error("Please provide a picture");
+            }
             if (!formData.description) {
                 throw new Error("Please provide a description");
             }
 
             if (!formData.location.latitude || !formData.location.longitude) {
                 throw new Error("Please provide location information");
+            }
+
+            if (!formData.witnessContact) {
+                throw new Error("Please provide your contact details")
+            }
+
+            if (!formData.witnessName) {
+                throw new Error("Please provide your name")
             }
 
             //generate a unique ID for the new report, starting from the highest ID + 1
@@ -294,11 +312,28 @@ export default function Report() {
                     style={styles.input}
                     placeholder="Enter your email"
                     value={formData.witnessContact}
-                    onChangeText={(text) => setFormData({ ...formData, witnessContact: text })}
+                    autoCapitalize="none"
+                    onChangeText={(text) => {
+                        setFormData({ ...formData, witnessContact: text });
+
+                        // Immediately validate as the user types (optional)
+                        if (text && !validateEmail(text)) {
+                            setEmailError("Please enter a valid email address.");
+                        } else {
+                            setEmailError("");  // Clear the error if the email is valid
+                        }
+                    }}
+                    onBlur={() => {
+                        // Validate on blur (when the user finishes typing and leaves the input)
+                        if (formData.witnessContact && !validateEmail(formData.witnessContact)) {
+                            setEmailError("Please enter a valid email address.");
+                        }
+                    }}
                 />
+                {emailError ? <Text style={styles.errorText}>{emailError}</Text> : null}
 
                 <TouchableOpacity
-                    style={[styles.submitBtn, styles.submitBtnDisabled]}
+                    style={[styles.submitBtn]}
                     onPress={submitReport}
                 >
                     <Text style={styles.submitBtnText}>Submit Report</Text>
@@ -317,10 +352,15 @@ const styles = StyleSheet.create({
         marginBottom: 16,
         zIndex: 9999,
     },
+    errorText: {
+        fontSize: 14,
+        color: "red",
+        marginTop: 4,
+    },
     dateInput: {
         padding: 12,
         fontSize: 16,
-        backgroundColor: "#fff", // Match other input fields
+        backgroundColor: "#fff",
         textAlign: "left",
     },
     dateText: {
