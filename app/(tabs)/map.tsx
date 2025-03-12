@@ -31,12 +31,28 @@ export default function Map() {
   const [sightings, setSightings] = useState<UFOSighting[]>();
 
   async function loadData() {
-    const response = await fetch("https://sampleapis.assimilate.be/ufo/sightings")
-    const sightings: UFOSighting[] = await response.json();
-    console.log(sightings);
+    try {
+      const response = await fetch("https://sampleapis.assimilate.be/ufo/sightings");
+      const apiSightings: UFOSighting[] = await response.json();
 
-    setSightings(sightings);
+      const existingSightingsJSON = await AsyncStorage.getItem('ufoReports');
+      let localSightings: UFOSighting[] = [];
+
+      if (existingSightingsJSON) {
+        localSightings = JSON.parse(existingSightingsJSON);
+      }
+
+      const combinedSightings = [...apiSightings, ...localSightings];
+
+      console.log("Combined sightings:", combinedSightings);
+
+      setSightings(combinedSightings);
+
+    } catch (error) {
+      console.error("Error loading data:", error);
+    }
   }
+
 
   const router = useRouter();
 
@@ -79,6 +95,9 @@ export default function Map() {
 
       // Save the updated list back to AsyncStorage
       await AsyncStorage.setItem('ufoReports', JSON.stringify(updatedSightings));
+
+      setSightings((prevSightings) => prevSightings ? [...prevSightings, newSighting] : [newSighting]);
+
       eventEmitter.emit('newSighting');
 
       console.log("Sighting added successfully:", newSighting);
