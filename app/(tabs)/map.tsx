@@ -5,6 +5,8 @@ import { View, Text, TouchableOpacity } from "react-native";
 import { useState, useEffect } from "react";
 import { useRouter } from "expo-router";
 import React from "react";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import eventEmitter from "../eventEmitter";
 
 const position: LatLngTuple = [51.505, -0.09];
 
@@ -48,21 +50,45 @@ export default function Map() {
     popupAnchor: [-3, 0],
   });
 
-  const addUFOSighting = (lat: number, lng: number) => {
-    setSightings([
-      ...(sightings ?? []),
-      {
-        id: (sightings?.length ?? 0) + 1,
+  const addUFOSighting = async (lat: number, lng: number) => {
+    try {
+      // Get existing sightings from AsyncStorage
+      const existingSightingsJSON = await AsyncStorage.getItem('ufoReports');
+      const existingSightings = existingSightingsJSON ? JSON.parse(existingSightingsJSON) : [];
+
+      // Generate a unique ID
+      const maxExistingId = existingSightings.length > 0
+        ? Math.max(...existingSightings.map((s: UFOSighting) => s.id))
+        : 10;
+
+      const newId = maxExistingId + 1;
+
+      const newSighting: UFOSighting = {
+        id: newId,
         witnessName: "Anonymous",
         location: { latitude: lat, longitude: lng },
         description: "A mysterious sighting",
         picture: "",
-        status: Status.Confirmed,
+        status: Status.Unconfirmed,
         dateTime: new Date(),
         witnessContact: "Unknown",
-      }
-    ]);
+      };
+
+      // Add the new sighting to the list
+      const updatedSightings = [...existingSightings, newSighting];
+
+      // Save the updated list back to AsyncStorage
+      await AsyncStorage.setItem('ufoReports', JSON.stringify(updatedSightings));
+      eventEmitter.emit('newSighting');
+
+      console.log("Sighting added successfully:", newSighting);
+    } catch (error) {
+      console.error("Error adding UFO sighting:", error);
+    }
   };
+
+
+
 
 
   return (

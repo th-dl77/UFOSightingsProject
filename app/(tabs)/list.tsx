@@ -4,6 +4,8 @@ import { useRouter } from "expo-router";
 import { format } from "date-fns";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { UFOSighting } from "./map";
+import { reload } from "expo-router/build/global-state/routing";
+import eventEmitter from "../eventEmitter";
 
 export default function List() {
   const [sightings, setSightings] = useState<UFOSighting[]>();
@@ -23,7 +25,10 @@ export default function List() {
       const combinedSightings = [...sightings, ...localSightings];
 
       console.log("Combined sightings:", combinedSightings);
-      setSightings(combinedSightings);
+      if (JSON.stringify(sightings) !== JSON.stringify(combinedSightings)) {
+        setSightings(combinedSightings);
+      }
+
     } catch (error) {
       console.error("Error loading data:", error);
     }
@@ -31,6 +36,12 @@ export default function List() {
 
   useEffect(() => {
     loadData();
+
+    eventEmitter.on('newSighting', loadData);
+
+    return () => {
+      eventEmitter.off('newSighting', loadData); // Cleanup
+    };
   }, []);
 
   const router = useRouter();
