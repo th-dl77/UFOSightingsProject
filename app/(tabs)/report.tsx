@@ -165,6 +165,14 @@ export default function Report() {
         }
     }
 
+    const CustomDateInput = React.forwardRef<View, { value?: string; onClick?: () => void }>(
+        ({ value, onClick }, ref) => (
+            <TouchableOpacity onPress={onClick} style={styles.dateInput} ref={ref as any}>
+                <Text style={styles.dateText}>{value || "Select a date"}</Text>
+            </TouchableOpacity>
+        )
+    );
+
     const today = new Date();
 
     return (
@@ -211,14 +219,18 @@ export default function Report() {
 
                 <View style={styles.datePickerContainer}>
                     <Text style={styles.labelText}>Date:</Text>
-                    <DatePicker
-                        wrapperClassName="datePickerContainer"
-                        selected={sightingDate}
-                        popperPlacement="bottom-start"
-                        maxDate={today}
-                        onChange={(date) => setSightingDate(date)}
-                        dateFormat="MMMM d, yyyy"
-                    />
+                    <View style={styles.datePickerWrapper}>
+                        <DatePicker
+                            wrapperClassName="datePickerContainer"
+                            selected={sightingDate}
+                            popperPlacement="bottom-start"
+                            required
+                            maxDate={today}
+                            onChange={(date) => setSightingDate(date)}
+                            dateFormat="MMMM d, yyyy"
+                            customInput={<CustomDateInput />}
+                        />
+                    </View>
                 </View>
 
                 <View style={styles.locationContainer}>
@@ -296,8 +308,26 @@ const styles = StyleSheet.create({
         backgroundColor: "#fff",
     },
     datePickerContainer: {
+        marginBottom: 16,
         zIndex: 9999,
-        marginBottom: 20,
+    },
+    dateInput: {
+        padding: 12,
+        fontSize: 16,
+        backgroundColor: "#fff", // Match other input fields
+        textAlign: "left",
+    },
+    dateText: {
+        fontSize: 16,
+        color: "#333",
+    },
+    datePickerWrapper: {
+        borderWidth: 1,
+        borderColor: "#ddd",
+        borderRadius: 8,
+        padding: 10,
+        backgroundColor: "#fff",
+        justifyContent: "center",
     },
     scrollContainer: {
         flex: 1,
