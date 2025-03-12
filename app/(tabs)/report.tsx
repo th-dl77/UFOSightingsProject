@@ -5,6 +5,8 @@ import { Ionicons } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
 import * as Location from "expo-location";
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import DatePicker from 'react-datepicker'
+import "react-datepicker/dist/react-datepicker.css";
 
 type Status = "pending" | "verified" | "rejected";
 
@@ -31,6 +33,7 @@ export default function Report() {
         picture: null as string | null,
     });
 
+    const [startDate, setStartDate] = useState<Date | null>(new Date());
     //state for the highest ID value
     const [highestId, setHighestId] = useState<number>(0);
 
@@ -238,6 +241,14 @@ export default function Report() {
                         <Ionicons name="location" size={20} color="#fff" />
                         <Text style={styles.locationBtnText}>Use Current Location</Text>
                     </TouchableOpacity>
+                </View>
+
+                <View>
+                    <DatePicker
+                        selected={startDate}
+                        onChange={(date) => setStartDate(date)}
+                        dateFormat="MMMM d, yyyy"
+                    />
                 </View>
 
                 <Text style={styles.labelText}>Your Name:</Text>
