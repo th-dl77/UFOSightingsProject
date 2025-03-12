@@ -9,6 +9,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 export default function Details() {
   const { id } = useLocalSearchParams();
   const [sighting, setSighting] = useState<UFOSighting | undefined>();
+  const router = useRouter();  // Use the useRouter hook for navigation
 
   async function loadData() {
     try {
@@ -62,6 +63,12 @@ export default function Details() {
       <Text style={[{ fontSize: 18, fontWeight: "bold" }]}>Sighting witness:</Text>
       <Text style={styles.witnessName}>{sighting?.witnessName}</Text>
       <Text style={styles.witnessContact}>{sighting?.witnessContact}</Text>
+      <TouchableOpacity
+        style={styles.button}
+        onPress={() => router.push("../(tabs)/list")}
+      >
+        <Text style={styles.buttonText}>Back to List</Text>
+      </TouchableOpacity>
     </View>
   );
 }
@@ -110,5 +117,16 @@ const styles = StyleSheet.create({
   witnessContact: {
     fontSize: 14,
     color: "#555",
+  },
+  button: {
+    marginTop: 20,
+    padding: 12,
+    backgroundColor: "#0066cc",
+    borderRadius: 8,
+  },
+  buttonText: {
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "bold",
   },
 });
