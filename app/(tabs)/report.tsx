@@ -245,12 +245,15 @@ export default function Report() {
                             placeholder="Location Latitude"
                             keyboardType="numeric"
                             value={formData.location.latitude}
-                            onChangeText={(text) =>
-                                setFormData({
-                                    ...formData,
-                                    location: { ...formData.location, latitude: text },
-                                })
-                            }
+                            onChangeText={(text) => {
+                                const numericText = text.replace(/[^0-9.-]/g, "");
+                                if (numericText.split(".").length <= 2) {
+                                    setFormData({
+                                        ...formData,
+                                        location: { ...formData.location, latitude: numericText },
+                                    });
+                                }
+                            }}
                         />
                     </View>
                     <View style={styles.coordField}>
@@ -260,12 +263,15 @@ export default function Report() {
                             placeholder="Location Longitude"
                             keyboardType="numeric"
                             value={formData.location.longitude}
-                            onChangeText={(text) =>
-                                setFormData({
-                                    ...formData,
-                                    location: { ...formData.location, longitude: text },
-                                })
-                            }
+                            onChangeText={(text) => {
+                                const numericText = text.replace(/[^0-9.-]/g, "");
+                                if (numericText.split(".").length <= 2) {
+                                    setFormData({
+                                        ...formData,
+                                        location: { ...formData.location, longitude: numericText },
+                                    });
+                                }
+                            }}
                         />
                     </View>
                 </View>
