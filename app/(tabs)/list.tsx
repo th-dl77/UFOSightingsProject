@@ -48,6 +48,12 @@ export default function List() {
 
   return (
     <View style={styles.container}>
+      <TouchableOpacity
+        style={styles.button}
+        onPress={() => router.push("/")}
+      >
+        <Text style={styles.buttonText}>Back to Home</Text>
+      </TouchableOpacity>
       <FlatList
         data={sightings}
         keyExtractor={(item) => item.id.toString()}
@@ -100,6 +106,13 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
   },
+  button: {
+    marginTop: 20,
+    marginBottom: 20,
+    padding: 12,
+    backgroundColor: "#0066cc",
+    borderRadius: 8,
+  },
   image: {
     width: 100,
     height: 100,
@@ -129,5 +142,10 @@ const styles = StyleSheet.create({
   description: {
     fontSize: 14,
     color: "#333",
+  },
+  buttonText: {
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "bold",
   },
 });
