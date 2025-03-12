@@ -1,6 +1,6 @@
 import { MapContainer, Marker, Popup, SVGOverlay, TileLayer, useMap, useMapEvents } from "react-leaflet";
 import 'leaflet/dist/leaflet.css';
-import L, { LatLngTuple } from "leaflet";
+import L, { latLng, LatLngTuple } from "leaflet";
 import { View, Text, TouchableOpacity } from "react-native";
 import { useState, useEffect } from "react";
 import { useRouter } from "expo-router";
@@ -10,6 +10,7 @@ import eventEmitter from "../eventEmitter";
 import { LocationHandlerProps, Status, UFOSighting } from "../types/types";
 
 const position: LatLngTuple = [51.505, -0.09];
+const router = useRouter();
 
 const LocationHandler = ({ addMarker }: LocationHandlerProps) => {
   const map = useMapEvents({
@@ -17,7 +18,13 @@ const LocationHandler = ({ addMarker }: LocationHandlerProps) => {
       console.log(map.getCenter());
     },
     click: (e) => {
-      addMarker(e.latlng.lat, e.latlng.lng);
+      const { lat, lng } = e.latlng;
+      router.push({
+        pathname: "/(tabs)/report",
+        params: {
+          location: JSON.stringify({ latitude: lat, longitude: lng })
+        }
+      })
     }
   });
 
@@ -50,9 +57,6 @@ export default function Map() {
       console.error("Error loading data:", error);
     }
   }
-
-
-  const router = useRouter();
 
   useEffect(() => {
     loadData();

@@ -1,6 +1,6 @@
 import { View, Text, ScrollView, TouchableOpacity, TextInput, Image, StyleSheet, Alert } from "react-native";
 import React, { useState, useEffect } from "react";
-import { router } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
 import * as Location from "expo-location";
@@ -10,6 +10,8 @@ import "react-datepicker/dist/react-datepicker.css";
 import { UFOSighting } from "../types/types";
 
 export default function Report() {
+    //get lat and lng from the query parameters from url
+    const { location } = useLocalSearchParams();
     //state for form data
     const [formData, setFormData] = useState({
         description: "",
@@ -27,18 +29,31 @@ export default function Report() {
     const [highestId, setHighestId] = useState<number>(0);
 
     useEffect(() => {
+        if (location) {
+            try {
+                const locationString = Array.isArray(location) ? location[0] : location;
+                const parsedLocation = JSON.parse(locationString); // Parse the JSON string
+                setFormData((prev) => ({
+                    ...prev,
+                    location: parsedLocation, // Set location as an object
+                }));
+            } catch (error) {
+                console.error("Error parsing location:", error);
+            }
+        }
+
         const loadExistingReports = async () => {
-            //fetch reports from AsyncStorage (local storage)
+            // Fetch reports from AsyncStorage (local storage)
             const existingReportsJSON = await AsyncStorage.getItem('ufoReports');
             const existingReports = existingReportsJSON ? JSON.parse(existingReportsJSON) : [];
 
-            //fetch reports from the API (simulate API fetch here)
+            // Fetch reports from the API (simulate API fetch here)
             const apiReports = await fetchReportsFromAPI();
 
-            //combine local + API
+            // Combine local + API reports
             const combinedReports = [...existingReports, ...apiReports];
 
-            //find the highest ID value from the combined reports
+            // Find the highest ID value from the combined reports
             if (combinedReports.length > 0) {
                 const maxId = Math.max(...combinedReports.map((report: UFOSighting) => report.id), 0);
                 setHighestId(maxId);
@@ -46,7 +61,9 @@ export default function Report() {
         };
 
         loadExistingReports();
-    }, []);
+    }, [location]);
+
+
 
     //simulate fetching reports from an API (replace with actual API call)
     const fetchReportsFromAPI = async () => {
@@ -144,6 +161,7 @@ export default function Report() {
             router.push(`/details/${newId}`);
         } catch (err) {
             //todo: handle error
+            alert(err);
         }
     }
 
