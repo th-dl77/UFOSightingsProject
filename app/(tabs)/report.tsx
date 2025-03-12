@@ -134,7 +134,7 @@ export default function Report() {
             const reportData = {
                 id: newId,
                 ...formData,
-                dateTime: new Date().toISOString(),
+                dateTime: startDate,
                 status: "unconfirmed",
             };
 
