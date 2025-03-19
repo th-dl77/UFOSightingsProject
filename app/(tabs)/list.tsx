@@ -23,7 +23,6 @@ export default function List() {
 
       const combinedSightings = [...sightings, ...localSightings];
 
-      console.log("Combined sightings:", combinedSightings);
       if (JSON.stringify(sightings) !== JSON.stringify(combinedSightings)) {
         setSightings(combinedSightings);
       }

@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import { useRouter } from "expo-router";
 import { MaterialCommunityIcons } from "@expo/vector-icons"; // Import MaterialCommunityIcons
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { UFOSighting } from "./(tabs)/map";
+import { UFOSighting } from "./types/types";
 
 const { width } = Dimensions.get("window"); // Get screen width
 
